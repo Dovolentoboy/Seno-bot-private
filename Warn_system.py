@@ -6,7 +6,7 @@ from asyncio import sleep
 
 
 
-cluster = MongoClient('mongodb+srv://Dovolentoboy:a600370@cluster0.6wxtw41.mongodb.net/test')
+cluster = MongoClient(Link)
 db = cluster.Warndb
 collusers = db.users
 collservers = db.Collservers
