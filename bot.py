@@ -4,7 +4,7 @@ import os
 from pymongo import MongoClient
 from config import Token
 
-cluster = MongoClient('mongodb+srv://Dovolentoboy:a600370@cluster0.6wxtw41.mongodb.net/test')
+cluster = MongoClient(')
 db = cluster['ecodb']
 collection = db['users']
 db2 = cluster['Warndb']
