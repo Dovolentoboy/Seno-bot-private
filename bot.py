@@ -4,11 +4,21 @@ import os
 from pymongo import MongoClient
 from config import Token
 
-cluster = MongoClient(')
-db = cluster['ecodb']
-collection = db['users']
-db2 = cluster['Warndb']
-collection2 = db2['users']
+cluster = MongoClient(LINK)
+Warndb = cluster.Warndb
+Warncoll =  Warndb.users
+
+
+Economydb = cluster.ecodb
+Economycoll = Economydb.users
+
+
+Mutedb = cluster.Mutedb
+Mutecoll = Mutedb.users
+
+
+Localbandb = cluster.Localban
+Localbancoll = Localbandb.users
 
 bot = commands.Bot(command_prefix='.',intents=disnake.Intents.all())
 
@@ -27,58 +37,90 @@ async def on_ready():
             for member in guild.members:
                 post = {
                     '_id':member.id,
-                    'balance':0,
+                    'balance':1000,
                     'lvl':0,
                     'xp':0
 
             }
-            if collection.count_documents({'_id':member.id}) == 0:
-                collection.insert_one(post)
-            
-
-            for guild in bot.guilds:
-                for member in guild.members:
-                    value = {
-                        '_id':member.id,
-                        'warns':0,
-                        'reason':[]
+            if Economycoll.count_documents({'_id':member.id}) == 0:
+                Economycoll.insert_one(post)
+                for guild in bot.guilds:
+                    for member in guild.members:
+                        value = {
+                            '_id':member.id,
+                            'warns':0,
+                            'reason':[]
                     }
-                    if collection2.count_documents({'_id':member.id}) == 0:
-                        collection2.insert_one(value)
-        
-        
-                
-    
-    
+                        if Warncoll.count_documents({'_id':member.id}) == 0:
+                            Warncoll.insert_one(value)
+                            for guild in bot.guilds:
+                                for member in guild.members:
+                                    mutes = {
+                                        '_id':member.id,
+                                            'mutes':0,
+                                                'reason':[]
+                    }
+                                if Mutecoll.count_documents({'_id':member.id}) == 0:
+                                    Mutecoll.insert_one(mutes)
+                            
+                                    for guild in bot.guilds:
+                                        for member in guild.members:
+                                            lb = {
+                                            '_id':member.id,
+                                                'Localban':0,
+                                                    'reason':[]
+                            }
+                                            if Localbancoll.count_documents({'_id':member.id}) == 0:
+                                                Localbancoll.insert_one(lb)
+                    
 
-    
-            
+                                        
+        
 
 @bot.event
-async def on_member_join(self,ctx,member):
+async def on_member_join(member:disnake.Member):
         for guild in bot.guilds:
             for member in guild.members:
                 post = {
                     '_id':member.id,
-                    'balance':0,
+                    'balance':1000,
                     'lvl':0,
                     'xp':0
 
             }
-            if collection.count_documents({'_id':member.id}) == 0:
-                collection.insert_one(post)
-            
-
-            for guild in bot.guilds:
-                for member in guild.members:
-                    value = {
-                        '_id':member.id,
-                        'warns':0,
-                        'reason':[]
+            if Economycoll.count_documents({'_id':member.id}) == 0:
+                Economycoll.insert_one(post)
+        for guild in bot.guilds:
+            for member in guild.members:
+                value = {
+                    '_id':member.id,
+                    'warns':0,
+                    'reason':[]
                     }
-                    if collection2.count_documents({'_id':member.id}) == 0:
-                        collection2.insert_one(value)
-                        
+                if Warncoll.count_documents({'_id':member.id}) == 0:
+                        Warncoll.insert_one(value)
+        for guild in bot.guilds:
+            for member in guild.members:
+                mutes = {
+                    '_id':member.id,
+                        'mutes':0,
+                            'reason':[]
+    }
+                if Mutecoll.count_documents({'_id':member.id}) == 0:
+                    Mutecoll.insert_one(mutes)
+                            
+        for guild in bot.guilds:
+            for member in guild.members:
+                lb = {
+                '_id':member.id,
+                    'Localban':0,
+                        'reason':[]
+}
+            if Localbancoll.count_documents({'_id':member.id}) == 0:
+                    Localbancoll.insert_one(lb)
+                            
+                                    
+
         embed=disnake.Embed(
             title='Новый участник',
             description=f'{member.mention} Добро пожаловать на сервер! Прежде чем общаться прочтите правила и пройдите верификацию',
@@ -86,7 +128,7 @@ async def on_member_join(self,ctx,member):
             )
         url = 'https://tenor.com/ru/view/welcome-gif-20647847'
         embed.set_image(url=url)
-        role = disnake.utils.get(member.guild.roles,id=1068443146586947634) #личка
+        role = disnake.utils.get(member.guild.roles,id=1068443146586947634) 
         await member.send (embed=embed)
         await member.add_roles(role)
         
@@ -123,6 +165,8 @@ async def unload(ctx, *, extension):
 for filename in os.listdir("./cogs"):
     if filename.endswith(".py") and not filename.startswith("_"):
         bot.load_extension(f"cogs.{filename[:-3]}")
+
+    
 
 
         
